@@ -1,0 +1,19 @@
+# Apache / LiteSpeed Rewrite Rules for Korpora API
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /api/
+
+  # Pass Authorization header
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  # If the requested file or directory does not exist, send to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Security: Deny direct access to data directory (SQLite files)
+<FilesMatch "\.(sqlite|db)$">
+  Order deny,allow
+  Deny from all
+</FilesMatch>
